@@ -1,0 +1,53 @@
+* {
+    font-family: Tahoma;
+}
+          
+td:nth-child(6n) {
+    display: none;
+}
+          
+br + a {
+    display: none;
+}
+          
+ul {
+    padding-left: 20px;
+}
+          
+table {
+    width: 400px;
+    border: none;
+}
+          
+h3 {
+    margin-bottom: 5px; 
+    margin-top: 0px;
+}
+
+h2 {
+    text-align: center;
+}
+          
+tr:nth-child(n+2) td h3 {
+    margin-top: 25px;
+}
+          
+tr:not([align='center']):nth-child(2n+1) {
+    background-color: #efefef;
+}
+         
+tr:not([align='center']):nth-child(2n) {
+    background-color: #dfdfdf
+}
+         
+td {
+    border: none
+}
+
+td[colspan="2"] {
+    background: white;
+}
+
+hr + i {
+    display: none;
+}

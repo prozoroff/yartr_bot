@@ -1,0 +1,32 @@
+{
+  "name": "yartr",
+  "version": "1.0.0",
+  "description": "Yaroslavl public transport scheduling bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prozoroff/yartr_bot.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "transport",
+    "yaroslavl"
+  ],
+  "author": "Alexandr Prozorov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prozoroff/yartr_bot/issues"
+  },
+  "homepage": "https://github.com/prozoroff/yartr_bot#readme",
+  "dependencies": {
+    "iconv-lite": "^0.4.24",
+    "node-telegram-bot-api": "^0.30.0",
+    "puppeteer": "^1.15.0",
+    "request-promise": "^4.2.4"
+  }
+}
