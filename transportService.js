@@ -46,8 +46,7 @@ function isCorrectRoute(route) {
     return parseInt(route).toString() !== 'NaN'
 }
 
-function parseRoute(routeStr) {
-    const route = routeStr.toLowerCase()
+function parseRoute(route) {
     const splittedRoute = route.split(' ')
     let num, type
 

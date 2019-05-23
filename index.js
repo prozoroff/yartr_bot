@@ -4,9 +4,11 @@ const messages = require('./messages')
 const renderImage = require('./imageRenderer')
 const { inRow } = require('./utils')
 const { routeRenderMiddlware, isEmptyPage, extractContent } = require('./parsing')
+const { riverSchedule, createHtmlSchedule } = require('./riverSchedule')
 
 const token = process.env.tgtoken
 const bot = new TelegramBot(token, { polling: true })
+
 
 bot.onText(/\/start/, msg => {
   bot.sendMessage(msg.chat.id, messages.info, { parse_mode: 'Markdown' })
@@ -22,7 +24,21 @@ bot.on('message', (msg) => {
       [a[1], chatId].join('_')
   }))
 
-  getRouteInfo(msg.text).then(response => {
+  const formattedMessage = msg.text.toLowerCase().trim()
+
+  if (riverSchedule.hasOwnProperty(formattedMessage)) {
+    const { html, callbacks } = createHtmlSchedule(formattedMessage);
+    return renderImage().then(data => {
+      const options = {
+        reply_markup: JSON.stringify({
+          inline_keyboard: inRow(formatCallback(callbacks), 2)
+        })
+      }
+      bot.sendPhoto(chatId, data.imagePath, options)
+    })
+  }
+
+  getRouteInfo(formattedMessage).then(response => {
     const htmlContent = extractContent(response.toString())
 
     if (isEmptyPage(htmlContent)) {
@@ -44,6 +60,13 @@ bot.on('message', (msg) => {
 
 bot.on('callback_query', (msg) => {
   const [link, chatId] = msg.data.split('_')
+
+  if (link.startsWith('<')) {
+    return renderImage(link).then(data => {
+      bot.sendPhoto(chatId, data.imagePath)
+    })
+  }
+
   getForecast(link).then(response => {
     const htmlContent = extractContent(response.toString())
 
@@ -56,3 +79,4 @@ bot.on('callback_query', (msg) => {
     })
   })
 })
+
