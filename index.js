@@ -4,7 +4,7 @@ const messages = require('./messages')
 const renderImage = require('./imageRenderer')
 const { inRow } = require('./utils')
 const { routeRenderMiddlware, isEmptyPage, extractContent } = require('./parsing')
-const { createHtmlSchedule, createHtmlForecast } = require('./riverTransportService')
+const { createHtmlSchedule, createHtmlForecast, isRiverTransport } = require('./riverTransportService')
 
 const token = process.env.tgtoken
 const bot = new TelegramBot(token, { polling: true })
@@ -26,7 +26,7 @@ bot.on('message', (msg) => {
 
   const formattedMessage = msg.text.toLowerCase().trim()
 
-  if (riverSchedule.hasOwnProperty(formattedMessage)) {
+  if (isRiverTransport(formattedMessage)) {
     const { html, callbacks } = createHtmlSchedule(formattedMessage);
     return renderImage(html).then(data => {
       const options = {

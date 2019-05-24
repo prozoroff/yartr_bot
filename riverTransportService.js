@@ -90,5 +90,7 @@ function getOffsetTime () {
      }
  }
 
- module.exports = { createHtmlSchedule, createHtmlForecast }
+ const isRiverTransport = str => riverSchedule.hasOwnProperty(str)
+
+ module.exports = { createHtmlSchedule, createHtmlForecast, isRiverTransport }
  
