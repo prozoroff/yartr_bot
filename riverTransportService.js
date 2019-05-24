@@ -45,7 +45,7 @@ function getOffsetTime () {
      let destNumber = 1;
  
      let result = `<table border="1" cellspacing="0"><tbody>
- <tr><td colspan="3" align="center">Речной трамвай<br>${start} - ${finish}</td></tr>
+ <tr><td colspan="3" align="center">Речной трамвай<h2>${start} - ${finish}</h2></td></tr>
  <tr align="center"><td colspan="3"><h3>Прямое направление<br></h3></td></tr>
  <tr align="center"><td><b>Марш</b></td><td><b>Текущая остановка</b></td><td><b>Вр.ост.</b></td></tr>`
  
