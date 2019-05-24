@@ -17,7 +17,7 @@ bot.onTextMessage(/^help$/i, (message, response) =>
 const https = require('https');
 const port = process.env.PORT || 8080;
 
-const webhookUrl = process.env.WEBHOOK_URL;
+const webhookUrl = "http://104.248.135.168";
 
 const httpsOptions = {};
 https.createServer(httpsOptions, bot.middleware()).listen(port, () => bot.setWebhook(webhookUrl));

@@ -221,15 +221,19 @@ const riverSchedule = {
 	}
 }
 
+function getOffsetTime () {
+   var local = new Date().toLocaleString("en-US", {timeZone: "Europe/Moscow"});
+   return new Date(local);
+}
 
 const getStop = arr => {
-	const curTime = new Date()
+	const curTime = new getOffsetTime()
 	for (let i = 0; i < arr.length - 1; i++) {
 
 		if (arr[i] === '-') continue;
 
-		const stopTime = new Date()
-		const nextStopTime = new Date()
+		const stopTime = new getOffsetTime()
+		const nextStopTime = new getOffsetTime()
 		stopTime.setHours(...arr[i].split(':'))
 		nextStopTime.setHours(...(arr[i + 1] === '-' ? arr[i + 2] : arr[i + 1]).split(':'))
 
@@ -237,7 +241,7 @@ const getStop = arr => {
 			return i;
 		}
 	}
-	return 0
+	return null
 }
 
 const createHtmlForecast = (title, stops, time) => {
@@ -261,22 +265,23 @@ const createHtmlSchedule = type => {
 	const callbacks = []
 	let destNumber = 1;
 
-	let result = `<h2>Речной трамвай ${start} - ${finish}</h2>
+	let result = `<h3>Речной трамвай</h3>
+<h2>${start} - ${finish}</h2>
 <table border="1" cellspacing="0"><tbody>
 <tr align="center"><td colspan="3"><h3>Прямое направление<br></h3></td></tr>
-<tr align="center"><td><b>Марш.</b></td><td><b>Текущая остановка</b></td><td><b>Вр.ост.</b></td></tr>`
+<tr align="center"><td><b>Марш</b></td><td><b>Текущая остановка</b></td><td><b>Вр.ост.</b></td></tr>`
 
 	schedule.straight.map((arr, i) => {
-		const curTime = new Date()
+		const curTime = new getOffsetTime()
 		const stop = getStop(arr)
 		const stopTime = stop > 0 ? arr[stop] : (curTime.getHours() + ':' + curTime.getMinutes())
 		const title = `Речной трамвай<br><b>${start} - ${finish}</b>`
 
-		if (stop > 0) {
-			callbacks.push([destNumber, createHtmlForecast(title, schedule.stops.scright, arr)])
+		if (stop !== null) {
+			callbacks.push([destNumber, ['river', type, 'straight', i].join(':')])
 		}
 
-		result += `<tr align="center"><td><b>${stop > 0 ? destNumber++ : ''}</b></td><td><b>${schedule.stops.straight[stop]}</b></td><td><b>${stopTime}</b></td></tr>`
+		result += `<tr align="center"><td><b>${stop !== null ? destNumber++ : ''}</b></td><td><b>${schedule.stops.straight[stop || 0]}</b></td><td><b>${stopTime}</b></td></tr>`
 	})
 
 
@@ -284,16 +289,16 @@ const createHtmlSchedule = type => {
 <tr align="center"><td><b>Марш.</b></td><td><b>Текущая остановка</b></td><td><b>Вр.ост.</b></td></tr>`
 
 	schedule.back.map((arr, i) => {
-		const curTime = new Date()
+		const curTime = new getOffsetTime()
 		const stop = getStop(arr)
 		const stopTime = stop > 0 ? arr[stop] : (curTime.getHours() + ':' + curTime.getMinutes())
 		const title = `Речной трамвай<br><b>${finish} - ${start}</b>`
 
-		if (stop > 0) {
-			callbacks.push([destNumber, createHtmlForecast(title, schedule.stops.back, arr)])
+		if (stop !== null) {
+			callbacks.push([destNumber, ['river', type, 'back', i].join(':')])
 		}
 
-		result += `<tr align="center"><td><b>${stop > 0 ? destNumber++ : ''}</b></td><td><b>${schedule.stops.back[stop]}</b></td><td><b>${stopTime}</b></td></tr>`
+		result += `<tr align="center"><td><b>${stop !== null ? destNumber++ : ''}</b></td><td><b>${schedule.stops.back[stop || 0]}</b></td><td><b>${stopTime}</b></td></tr>`
 	})
 
 	result += '</tbody></table>'
@@ -305,4 +310,4 @@ const createHtmlSchedule = type => {
 }
 
 
-module.exports = { riverSchedule, createHtmlSchedule }
+module.exports = { riverSchedule, createHtmlSchedule, createHtmlForecast }

@@ -4,7 +4,7 @@ const messages = require('./messages')
 const renderImage = require('./imageRenderer')
 const { inRow } = require('./utils')
 const { routeRenderMiddlware, isEmptyPage, extractContent } = require('./parsing')
-const { riverSchedule, createHtmlSchedule } = require('./riverSchedule')
+const { riverSchedule, createHtmlSchedule, createHtmlForecast } = require('./riverSchedule')
 
 const token = process.env.tgtoken
 const bot = new TelegramBot(token, { polling: true })
@@ -28,7 +28,7 @@ bot.on('message', (msg) => {
 
   if (riverSchedule.hasOwnProperty(formattedMessage)) {
     const { html, callbacks } = createHtmlSchedule(formattedMessage);
-    return renderImage().then(data => {
+    return renderImage(html).then(data => {
       const options = {
         reply_markup: JSON.stringify({
           inline_keyboard: inRow(formatCallback(callbacks), 2)
@@ -61,8 +61,14 @@ bot.on('message', (msg) => {
 bot.on('callback_query', (msg) => {
   const [link, chatId] = msg.data.split('_')
 
-  if (link.startsWith('<')) {
-    return renderImage(link).then(data => {
+  if (link.startsWith('river')) {
+    const parts = link.split(':')
+    const dest = parts[2]
+    const dir = parts[1]
+    const start = riverSchedule[dir].stops.back[dest === 'straight' ? riverSchedule[dir].stops.back.length-1 : 0]
+    const finish = riverSchedule[dir].stops.back[dest === 'straight' ? 0 : riverSchedule[dir].stops.back.length-1]
+    const title = `Речной трамвай<br>${start} - ${finish}`
+    return renderImage(createHtmlForecast(title, riverSchedule[dir].stops[dest], riverSchedule[dir][dest][parseInt(parts[3])])).then(data => {
       bot.sendPhoto(chatId, data.imagePath)
     })
   }
