@@ -4,7 +4,7 @@ const messages = require('./messages')
 const renderImage = require('./imageRenderer')
 const { inRow } = require('./utils')
 const { routeRenderMiddlware, isEmptyPage, extractContent } = require('./parsing')
-const { riverSchedule, createHtmlSchedule, createHtmlForecast } = require('./riverSchedule')
+const { createHtmlSchedule, createHtmlForecast } = require('./riverTransportService')
 
 const token = process.env.tgtoken
 const bot = new TelegramBot(token, { polling: true })
@@ -65,10 +65,16 @@ bot.on('callback_query', (msg) => {
     const parts = link.split(':')
     const dest = parts[2]
     const dir = parts[1]
-    const start = riverSchedule[dir].stops.back[dest === 'straight' ? riverSchedule[dir].stops.back.length-1 : 0]
-    const finish = riverSchedule[dir].stops.back[dest === 'straight' ? 0 : riverSchedule[dir].stops.back.length-1]
+    const backStops = riverSchedule[dir].stops.back;
+    const start = backStops[dest === 'straight' ? backStops.length-1 : 0]
+    const finish = rbackStops[dest === 'straight' ? 0 : rbackStops.length-1]
+
     const title = `Речной трамвай<br>${start} - ${finish}`
-    return renderImage(createHtmlForecast(title, riverSchedule[dir].stops[dest], riverSchedule[dir][dest][parseInt(parts[3])])).then(data => {
+    const stops = riverSchedule[dir].stops[dest]
+    const times = riverSchedule[dir][dest][parseInt(parts[3])]
+
+    return renderImage(
+      createHtmlForecast(title, stops, times)).then(data => {
       bot.sendPhoto(chatId, data.imagePath)
     })
   }

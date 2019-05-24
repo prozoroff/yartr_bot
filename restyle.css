@@ -52,3 +52,7 @@ td[colspan="2"] {
 hr + i {
     display: none;
 }
+
+tr.waiting {
+    color: gray;
+}
