@@ -25,11 +25,13 @@ function getOffsetTime () {
  
  const createHtmlForecast = (destination, direction, routeNumber) => {
 
+console.log(destination, direction, routeNumber)
+
     const backStops = riverSchedule[direction].stops.back;
     const start = backStops[destination === 'straight' ? backStops.length-1 : 0]
-    const finish = rbackStops[destination === 'straight' ? 0 : rbackStops.length-1]
+    const finish = backStops[destination === 'straight' ? 0 : backStops.length-1]
 
-    const title = `Речной трамвай<br>${start} - ${finish}`
+    const title = `Речной трамвай<br><b>${start} - ${finish}</b>`
     const stops = riverSchedule[direction].stops[destination]
     const time = riverSchedule[direction][destination][routeNumber]
  
