@@ -23,7 +23,15 @@ function getOffsetTime () {
      return null
  }
  
- const createHtmlForecast = (title, stops, time) => {
+ const createHtmlForecast = (destination, direction, routeNumber) => {
+
+    const backStops = riverSchedule[direction].stops.back;
+    const start = backStops[destination === 'straight' ? backStops.length-1 : 0]
+    const finish = rbackStops[destination === 'straight' ? 0 : rbackStops.length-1]
+
+    const title = `Речной трамвай<br>${start} - ${finish}`
+    const stops = riverSchedule[direction].stops[destination]
+    const time = riverSchedule[direction][destination][routeNumber]
  
      let result = `<table><tbody><tr><td colspan="2" align="center">${title}</td></tr>
  <tr><td colspan="2" align="center"><hr><i><b>Прогноз прохождения</b></i></td></tr>`

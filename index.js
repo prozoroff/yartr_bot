@@ -63,18 +63,12 @@ bot.on('callback_query', (msg) => {
 
   if (link.startsWith('river')) {
     const parts = link.split(':')
-    const dest = parts[2]
-    const dir = parts[1]
-    const backStops = riverSchedule[dir].stops.back;
-    const start = backStops[dest === 'straight' ? backStops.length-1 : 0]
-    const finish = rbackStops[dest === 'straight' ? 0 : rbackStops.length-1]
-
-    const title = `Речной трамвай<br>${start} - ${finish}`
-    const stops = riverSchedule[dir].stops[dest]
-    const times = riverSchedule[dir][dest][parseInt(parts[3])]
-
+    const destination = parts[2]
+    const direction = parts[1]
+    const routeNumber = parseInt(parts[3])
+    
     return renderImage(
-      createHtmlForecast(title, stops, times)).then(data => {
+      createHtmlForecast(destination, direction, routeNumber)).then(data => {
       bot.sendPhoto(chatId, data.imagePath)
     })
   }
