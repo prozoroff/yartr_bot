@@ -112,6 +112,7 @@ console.log(destination, direction, routeNumber)
  }
 
  const isRiverTransport = str => riverSchedule.hasOwnProperty(str)
+ const getDirections => Object.keys(riverSchedule)
 
- module.exports = { createHtmlSchedule, createHtmlForecast, isRiverTransport }
+ module.exports = { createHtmlSchedule, createHtmlForecast, isRiverTransport, getDirections }
  

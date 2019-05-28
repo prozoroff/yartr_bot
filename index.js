@@ -4,7 +4,7 @@ const messages = require('./messages')
 const renderImage = require('./imageRenderer')
 const { inRow } = require('./utils')
 const { routeRenderMiddlware, isEmptyPage, extractContent } = require('./parsing')
-const { createHtmlSchedule, createHtmlForecast, isRiverTransport } = require('./riverTransportService')
+const { createHtmlSchedule, createHtmlForecast, isRiverTransport, getDirections } = require('./riverTransportService')
 
 const token = process.env.tgtoken
 const bot = new TelegramBot(token, { polling: true })
@@ -13,6 +13,18 @@ const bot = new TelegramBot(token, { polling: true })
 bot.onText(/\/start/, msg => {
   bot.sendMessage(msg.chat.id, messages.info, { parse_mode: 'Markdown' })
 })
+
+const sendRiver(message, chatId) => {
+  const { html, callbacks } = createHtmlSchedule(message);
+    return renderImage(html).then(data => {
+      const options = {
+        reply_markup: JSON.stringify({
+          inline_keyboard: inRow(formatCallback(callbacks), 2)
+        })
+      }
+      bot.sendPhoto(chatId, data.imagePath, options)
+    })
+}
 
 bot.on('message', (msg) => {
   if (msg.text === '/start') return;
@@ -26,16 +38,20 @@ bot.on('message', (msg) => {
 
   const formattedMessage = msg.text.toLowerCase().trim()
 
-  if (isRiverTransport(formattedMessage)) {
-    const { html, callbacks } = createHtmlSchedule(formattedMessage);
-    return renderImage(html).then(data => {
-      const options = {
+  if (formattedMessage === 'волга') {
+    const options = {
         reply_markup: JSON.stringify({
-          inline_keyboard: inRow(formatCallback(callbacks), 2)
+          inline_keyboard: getDirections.map(d => ({
+            text: d,
+            callback_data: 'volga_' + d
+          }))
         })
       }
-      bot.sendPhoto(chatId, data.imagePath, options)
-    })
+      bot.sendMessage(chatId, messages.chooseDirection, options)
+  }
+
+  if (isRiverTransport(formattedMessage)) {
+    sendRiver(formattedMessage, chatId)
   }
 
   getRouteInfo(formattedMessage).then(response => {
@@ -60,6 +76,10 @@ bot.on('message', (msg) => {
 
 bot.on('callback_query', (msg) => {
   const [link, chatId] = msg.data.split('_')
+
+  if (link.startsWith('volga')) {
+    sendRiver(link.split('_')[1], chatId)
+  }
 
   if (link.startsWith('river')) {
     const parts = link.split(':')
