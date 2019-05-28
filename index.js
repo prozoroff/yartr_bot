@@ -41,17 +41,14 @@ bot.on('message', (msg) => {
   if (formattedMessage === 'волга') {
     const options = {
         reply_markup: JSON.stringify({
-          inline_keyboard: getDirections.map(d => ({
-            text: d,
-            callback_data: 'volga_' + d
-          }))
+          inline_keyboard: formatCallback(getDirections.map(d => [d, 'volga:' + d]))
         })
       }
       bot.sendMessage(chatId, messages.chooseDirection, options)
   }
 
   if (isRiverTransport(formattedMessage)) {
-    sendRiver(formattedMessage, chatId)
+    return sendRiver(formattedMessage, chatId)
   }
 
   getRouteInfo(formattedMessage).then(response => {
@@ -78,7 +75,7 @@ bot.on('callback_query', (msg) => {
   const [link, chatId] = msg.data.split('_')
 
   if (link.startsWith('volga')) {
-    sendRiver(link.split('_')[1], chatId)
+    return sendRiver(link.split(':')[1], chatId)
   }
 
   if (link.startsWith('river')) {
