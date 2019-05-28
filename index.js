@@ -14,12 +14,18 @@ bot.onText(/\/start/, msg => {
   bot.sendMessage(msg.chat.id, messages.info, { parse_mode: 'Markdown' })
 })
 
-const sendRiver(message, chatId) => {
+const formatCallback = (arr, chatId) => arr.map(a => ({
+    text: a[0],
+    callback_data:
+      [a[1], chatId].join('_')
+}))
+
+const sendRiver = (message, chatId) => {
   const { html, callbacks } = createHtmlSchedule(message);
     return renderImage(html).then(data => {
       const options = {
         reply_markup: JSON.stringify({
-          inline_keyboard: inRow(formatCallback(callbacks), 2)
+          inline_keyboard: inRow(formatCallback(callbacks, chatId), 2)
         })
       }
       bot.sendPhoto(chatId, data.imagePath, options)
@@ -30,12 +36,6 @@ bot.on('message', (msg) => {
   if (msg.text === '/start') return;
 
   const chatId = msg.chat.id;
-  const formatCallback = arr => arr.map(a => ({
-    text: a[0],
-    callback_data:
-      [a[1], chatId].join('_')
-  }))
-
   const formattedMessage = msg.text.toLowerCase().trim()
 
   if (formattedMessage === 'волга') {
@@ -64,7 +64,7 @@ bot.on('message', (msg) => {
     renderImage(htmlContent, routeRenderMiddlware).then(data => {
       const options = {
         reply_markup: JSON.stringify({
-          inline_keyboard: inRow(formatCallback(data.middlewareData), 3)
+          inline_keyboard: inRow(formatCallback(data.middlewareData, chatId), 3)
         })
       }
       bot.sendPhoto(chatId, data.imagePath, options)
