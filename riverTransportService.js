@@ -3,9 +3,20 @@ const riverSchedule = require('./riverSchedule')
 function getOffsetTime () {
     var local = new Date().toLocaleString("en-US", {timeZone: "Europe/Moscow"});
     return new Date(local);
- }
+}
+
+//skip routes of other days
+const now = getOffsetTime()
+const dayOfWeek = now.getDay() - 1
+const isOk = arr => arr.length === 1 && arr[0] === dayOfWeek || arr[0] <= dayOfWeek && arr[1] >= dayOfWeek;
+Object.keys(riverSchedule).forEach(k => {
+    const schedule = riverSchedule[k]
+    schedule.straight = schedule.straight.filter(s => !Array.isArray(s[0]) || isOk(s[0])).map(s => Array.isArray(s[0]) ? s.slice(1) : s)
+    schedule.back = schedule.back.filter(s => !Array.isArray(s[0]) || isOk(s[0])).map(s => Array.isArray(s[0]) ? s.slice(1) : s)
+})
+
  
- const getStop = arr => {
+const getStop = arr => {
      const curTime = new getOffsetTime()
      for (let i = 0; i < arr.length - 1; i++) {
  
@@ -21,7 +32,7 @@ function getOffsetTime () {
          }
      }
      return null
- }
+}
  
  const createHtmlForecast = (destination, direction, routeNumber) => {
 
