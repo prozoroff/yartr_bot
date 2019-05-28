@@ -81,7 +81,7 @@ console.log(destination, direction, routeNumber)
          result += `<tr ${stop === null ? 'class=\'waiting\'':''} align="center">
                     <td><b>${stop !== null ? destNumber++ : '-'}</b></td>
                     <td><b>${schedule.stops.straight[stop || 0]}</b></td>
-                    <td><b>${stopTime}</b></td>
+                    <td>${stopTime}</td>
                     </tr>`
      })
  

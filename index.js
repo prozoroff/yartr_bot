@@ -41,7 +41,7 @@ bot.on('message', (msg) => {
   if (formattedMessage === 'волга') {
     const options = {
         reply_markup: JSON.stringify({
-          inline_keyboard: formatCallback(getDirections.map(d => [d, 'volga:' + d]))
+          inline_keyboard: formatCallback(getDirections().map(d => [d, 'volga:' + d]))
         })
       }
       bot.sendMessage(chatId, messages.chooseDirection, options)
